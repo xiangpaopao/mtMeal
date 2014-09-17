@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html ng-app="mtMeal">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title><%= title %></title>
+      <link rel="apple-touch-icon" href="/images/app.png" />
+      <link rel="apple-touch-icon" sizes="72x72" href="/images/app.png" />
+      <link rel="apple-touch-icon" sizes="114x114" href="/images/app.png" />
+      <link rel='stylesheet' href='/stylesheets/normalize.css' />
+      <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+      <link rel='stylesheet' href='/stylesheets/font-awesome.css' />
+      <link rel='stylesheet' href='/stylesheets/style.css' />
+      <script>
+          var users = JSON.parse('<%- JSON.stringify(users)%>');
+          var groups = JSON.parse('<%- JSON.stringify(groups)%>');
+
+      </script>
+  </head>
+  <body>
+  <div class="container"  ng-controller="userListController">
+  <h2>订餐总人数：{{sum}}
+      <button type="button" class="btn btn-default btn-lg" ng-class="{'btn-loading':isReseting}" ng-click="reset()">重置</button>
+      <button type="button" class="btn btn-default btn-lg" ng-class="{'btn-success':isManageing,'active':isManageing}" ng-click="manage()">管理</button>
+      <button type="button" class="btn btn-default btn-lg" ng-class="{'hide':!isManageing}"  ng-click="addGroup()"><i class="fa fa-plus"></i>添加组</button>
+  </h2>
+
+  <div class="group" ng-repeat="group in groups">
+      <h3 class="groupTit">
+          {{group.name}}
+          <button type="button" class="close" ng-class="{'hide':!isManageing}" ng-click="delGroup(group)"><i class="fa fa-times"></i></button>
+          <button type="button" class="edit" ng-class="{'hide':!isManageing}" ng-click="editGroup(group)"><i class="fa fa-edit"></i></button>
+      </h3>
+      <div class="item" ng-repeat="user in users[$index]" ng-class="{'hide':user.isHide}">
+          <button class="btn btn-default btn-lg" ng-class="{'btn-success':user.active,'active':user.active ,'btn-loading':user.loading}"  ng-click="stun(user)">{{user.name}}</button>
+          <button type="button" class="close" ng-class="{'hide':!isManageing}" ng-click="delUser(user)"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="item" ng-class="{'hide':user.isHide}">
+          <button class="btn btn-primary btn-h" ng-class="{'hide':!isManageing}" ng-click="addUser(group.id)"><i class="fa fa-plus"></i></button>
+      </div>
+  </div>
+  </div>
+
+  <script type="text/ng-template" id="delModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title">删除</h3>
+      </div>
+      <div class="modal-body">
+
+          <h4>确定要删除 <b>{{delName}}</b> 吗？</h4>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" ng-click="ok()">确定</button>
+          <button class="btn btn-warning" ng-click="cancel()">取消</button>
+      </div>
+  </script>
+
+  <script type="text/ng-template" id="pswModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title">系统管理</h3>
+      </div>
+      <div class="modal-body">
+          <alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+          <h5>请输入管理员密码</h5>
+          <input type="password" ng-model="password.value" class="form-control">
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" ng-click="ok()">确定</button>
+          <button class="btn btn-warning" ng-click="cancel()">取消</button>
+      </div>
+  </script>
+
+  <script type="text/ng-template" id="addUserModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title">添加员工</h3>
+      </div>
+      <div class="modal-body">
+          <alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+          <h5>请输入姓名</h5>
+          <input type="text" ng-model="newUser.name" class="form-control">
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" ng-click="ok()">确定</button>
+          <button class="btn btn-warning" ng-click="cancel()">取消</button>
+      </div>
+  </script>
+
+  <script type="text/ng-template" id="addGroupModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title">添加组</h3>
+      </div>
+      <div class="modal-body">
+          <alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+          <h5>请输入名称</h5>
+          <input type="text" ng-model="newGroup.name" class="form-control">
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" ng-click="ok()">确定</button>
+          <button class="btn btn-warning" ng-click="cancel()">取消</button>
+      </div>
+  </script>
+
+  <script type="text/ng-template" id="editGroupModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title">编辑组</h3>
+      </div>
+      <div class="modal-body">
+          <alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+          <h5>请输入名称</h5>
+          <input type="text" ng-model="group.name" class="form-control">
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" ng-click="ok()">确定</button>
+          <button class="btn btn-warning" ng-click="cancel()">取消</button>
+      </div>
+  </script>
+
+
+
+
+  <script src="/javascripts/angular.js"></script>
+  <script src="/javascripts/ui-bootstrap-tpls-0.11.0.js"></script>
+  <script src="/javascripts/ngStorage.js"></script>
+  <script src="/javascripts/app.js"> </script>
+</body>
+</html>
